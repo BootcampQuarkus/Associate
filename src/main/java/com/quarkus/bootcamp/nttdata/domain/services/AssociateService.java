@@ -42,17 +42,17 @@ public class AssociateService {
         // Buscar si la tarjeta esta en el multicanal
         return cardMultiChannelApi.getBySerial(associate.getSerial()).flatMap(cmc -> {
           // Si la tarjeta existe en el multicanal, generar código
-          return generateKey(cmc).flatMap(gt -> Uni.createFrom().item(gt.getKey()));
+          return generateKey(cmc, associate).flatMap(gt -> Uni.createFrom().item(gt.getKey()));
         });
       });
     });
     // Guardar codigo en redis
   }
 
-  public Uni<AssociationD> generateKey(CardMultiChannelD cmc) {
+  public Uni<AssociationD> generateKey(CardMultiChannelD cmc, Associate associate) {
     Integer key = ThreadLocalRandom.current().nextInt(10000000, 100000000);
     Long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
-    return tokenApi.create(new AssociationD(key.toString(), new ValueD(timestamp.toString(), cmc.getUserId())));
+    return tokenApi.create(new AssociationD(key.toString(), new ValueD(timestamp.toString(), cmc.getUserId(), associate.getId())));
   }
 
   public Uni<CardD> callCardsCustomer(Associate associate) {

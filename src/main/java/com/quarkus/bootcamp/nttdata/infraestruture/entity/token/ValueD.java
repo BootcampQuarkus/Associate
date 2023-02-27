@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class ValueD {
   protected String createAt;
   protected String userId;
+  protected String CustomerWalletId;
 }
